@@ -1,0 +1,42 @@
+
+project/
+│
+├── notebooks/
+│   └── anomaly_detection_autoencoder.ipynb
+│
+├── models/
+│   ├── anomaly_autoencoder.keras    ← TensorFlow model (Functional API + Custom Layer)
+│   ├── scaler.pkl                   ← Fitted StandardScaler
+│   ├── feature_columns.pkl          ← Ordered list of feature names
+│   └── threshold.pkl                ← Dict: {p95, p99, primary}
+│
+├── fastapi/
+│   ├── main.py                      ← FastAPI app with /predict and /predict/batch
+│   └── anomaly_service.py           ← AnomalyService class (model loading + inference)
+│
+├── logs/                            ← TensorBoard event files
+│   └── anomaly_autoencoder_<ts>/
+│
+├── anomaly_results.csv              ← All 6573 transactions with scores & labels
+├── loss_curves.png
+├── viz_anomaly_histogram.png
+├── viz_error_distribution.png
+├── viz_top_anomalies.png
+├── viz_pca_latent.png
+└── viz_user_anomaly.png
+
+─────────────────────────────────────────────
+Anomaly Types Detected
+─────────────────────────────────────────────
+  SPENDING_SPIKE             amount_rolling_ratio > 3.0
+  MERCHANT_FREQUENCY_SPIKE   merchant_freq_ratio  > 0.8
+  UNUSUAL_TIME               is_unusual_hour == 1 (hour z-score > 2σ)
+  CATEGORY_FREQUENCY_SPIKE   category_freq_ratio  > 0.7
+  GENERAL_ANOMALY            high reconstruction error, no single driver
+
+─────────────────────────────────────────────
+Severity Rules
+─────────────────────────────────────────────
+  normal   : score < p95
+  warning  : p95 <= score < p99
+  high     : score >= p99
