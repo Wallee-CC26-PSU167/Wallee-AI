@@ -349,11 +349,7 @@ class AnomalyService:
             enriched
         )
 
-        if (
-            score > self.p95
-            and len(anomalies) == 0
-        ):
-
+        if score > self.p95:
             anomalies.append(
                 {
                     "id": f"an_{anomaly_counter:03d}",
@@ -361,20 +357,12 @@ class AnomalyService:
                     "message": "Pola transaksi tidak biasa",
                     "detail": [
                         {
-                            "anomaly_score":
-                                round(
-                                    score,
-                                    8
-                                ),
-                            "threshold":
-                                round(
-                                    self.p95,
-                                    8
-                                )
+                            "anomaly_score": round(score, 8),
+                            "threshold": round(self.p95, 8)
                         }
                     ],
                     "dismissed": False
                 }
             )
-
+            
         return anomalies
